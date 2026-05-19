@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sir BalanceAlot Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Sir BalanceAlot Dashboard</h1>
+
+  <p id="status">Connecting...</p>
+
+  <div class="cards">
+    <div class="card">Angle: <span id="angle">--</span>°</div>
+    <div class="card">Gyro: <span id="gyro">--</span>°/s</div>
+    <div class="card">Left Motor: <span id="left">--</span></div>
+    <div class="card">Right Motor: <span id="right">--</span></div>
+    <div class="card">Battery: <span id="battery">--</span> V</div>
+    <div class="card">Mode: <span id="mode">--</span></div>
+  </div>
+
+  <div class="buttons">
+    <button onclick="sendCommand('START')">Start</button>
+    <button onclick="sendCommand('STOP')">Stop</button>
+    <button onclick="sendCommand('ESTOP')">Emergency Stop</button>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
