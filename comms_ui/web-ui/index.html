@@ -18,10 +18,72 @@
     <div class="card">Mode: <span id="mode">--</span></div>
   </div>
 
-  <div class="buttons">
-    <button onclick="sendCommand('START')">Start</button>
-    <button onclick="sendCommand('STOP')">Stop</button>
-    <button onclick="sendCommand('ESTOP')">Emergency Stop</button>
+  <div class="camera-section">
+    <h2>Robot Camera Feed</h2>
+
+    <div class="camera-box">
+      <img id="camera-feed" src="/camera-feed" alt="Live robot camera feed">
+    </div>
+
+    <p class="camera-note">Showing the robot's forward-facing camera view.</p>
+  </div>
+
+  <div class="controls">
+    <h2>Manual Controls</h2>
+
+    <div class="gamepad">
+      <button
+        class="control-btn forward"
+        title="Move the robot forward"
+        onclick="sendCommand('FORWARD')">
+        ▲
+      </button>
+
+      <button
+        class="control-btn turn-left"
+        title="Turn the robot left"
+        onclick="sendCommand('LEFT')">
+        ↶
+      </button>
+
+      <button
+        class="control-btn stop"
+        title="Stop all movement but keep the robot enabled"
+        onclick="sendCommand('STOP')">
+        Stop
+      </button>
+
+      <button
+        class="control-btn turn-right"
+        title="Turn the robot right"
+        onclick="sendCommand('RIGHT')">
+        ↷
+      </button>
+
+      <button
+        class="control-btn backward"
+        title="Move the robot backward"
+        onclick="sendCommand('BACKWARD')">
+        ▼
+      </button>
+    </div>
+
+    <div class="system-controls">
+      <button onclick="sendCommand('START')">
+        <span class="btn-title">Start</span>
+        <span class="btn-desc">Enable robot</span>
+      </button>
+
+      <button onclick="sendCommand('STOP')">
+        <span class="btn-title">Stop</span>
+        <span class="btn-desc">Stop movement</span>
+      </button>
+
+      <button class="estop" onclick="sendCommand('ESTOP')">
+        <span class="btn-title">Emergency Stop</span>
+        <span class="btn-desc">Disable motors</span>
+      </button>
+    </div>
   </div>
 
   <script src="app.js"></script>

@@ -20,3 +20,13 @@ ws.onmessage = (event) => {
 ws.onclose = () => {
   statusEl.textContent = "Disconnected";
 };
+
+function sendCommand(command) {
+  ws.send(JSON.stringify({
+    type: "command",
+    command: command,
+    time_ms: Date.now()
+  }));
+
+  console.log("Sent command:", command);
+}
