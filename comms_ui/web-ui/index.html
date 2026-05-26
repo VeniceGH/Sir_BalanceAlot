@@ -40,14 +40,22 @@
       <button
         class="control-btn forward"
         title="Move the robot forward"
-        onclick="sendCommand('FORWARD')">
+        onmousedown="sendCommand('FORWARD')"
+        onmouseup="sendCommand('STOP')"
+        onmouseleave="sendCommand('STOP')"
+        ontouchstart="sendCommand('FORWARD')"
+        ontouchend="sendCommand('STOP')">
         ▲
       </button>
 
       <button
         class="control-btn turn-left"
         title="Turn the robot left"
-        onclick="sendCommand('LEFT')">
+        onmousedown="sendCommand('LEFT')"
+        onmouseup="sendCommand('STOP')"
+        onmouseleave="sendCommand('STOP')"
+        ontouchstart="sendCommand('LEFT')"
+        ontouchend="sendCommand('STOP')">
         ↶
       </button>
 
@@ -61,14 +69,22 @@
       <button
         class="control-btn turn-right"
         title="Turn the robot right"
-        onclick="sendCommand('RIGHT')">
+        onmousedown="sendCommand('RIGHT')"
+        onmouseup="sendCommand('STOP')"
+        onmouseleave="sendCommand('STOP')"
+        ontouchstart="sendCommand('RIGHT')"
+        ontouchend="sendCommand('STOP')">
         ↷
       </button>
 
       <button
         class="control-btn backward"
         title="Move the robot backward"
-        onclick="sendCommand('BACKWARD')">
+        onmousedown="sendCommand('BACKWARD')"
+        onmouseup="sendCommand('STOP')"
+        onmouseleave="sendCommand('STOP')"
+        ontouchstart="sendCommand('BACKWARD')"
+        ontouchend="sendCommand('STOP')">
         ▼
       </button>
     </div>
