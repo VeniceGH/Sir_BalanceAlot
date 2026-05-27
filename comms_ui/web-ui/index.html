@@ -90,14 +90,14 @@
     </div>
 
     <div class="system-controls">
-      <button onclick="sendCommand('START')">
-        <span class="btn-title">Start</span>
-        <span class="btn-desc">Enable robot</span>
+      <button onclick="sendMode('manual')">
+        <span class="btn-title">Manual</span>
+        <span class="btn-desc">Enable manual control</span>
       </button>
 
-      <button onclick="sendCommand('STOP')">
-        <span class="btn-title">Stop</span>
-        <span class="btn-desc">Stop movement</span>
+      <button onclick="sendMode('line_follow')">
+        <span class="btn-title">Line Follow</span>
+        <span class="btn-desc">Enable line following mode</span>
       </button>
 
       <button class="estop" onclick="sendCommand('ESTOP')">

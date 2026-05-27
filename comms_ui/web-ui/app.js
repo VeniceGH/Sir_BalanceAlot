@@ -30,3 +30,13 @@ function sendCommand(command) {
 
   console.log("Sent command:", command);
 }
+
+function sendMode(mode) {
+  ws.send(JSON.stringify({
+    type: "mode",
+    command: mode,
+    time_ms: Date.now()
+  }));
+
+  console.log("Sent mode:", mode);
+}
