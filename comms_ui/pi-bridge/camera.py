@@ -5,12 +5,11 @@ import time
 class Camera:
     def __init__(self):
         self.picam2 = Picamera2()
-        config = self.picam2.create_preview_configuration(
-            main={"size": (640, 480)}
-        )
+        config = self.picam2.create_video_configuration( main={"format": "RGB888","size": (320, 240)}, buffer_count=4)
         self.picam2.configure(config)
 
         self.latest_frame = None
+        self.latest_debug_frame = None
         self.lock = threading.Lock()
         self.running = False
 
@@ -27,9 +26,19 @@ class Camera:
 
             with self.lock:
                 self.latest_frame = frame
+                if self.latest_debug_frame is None:
+                    self.latest_debug_frame = frame
 
-            time.sleep(0.01)  # ~30–60 FPS
+            time.sleep(0.01)
 
     def get_frame(self):
         with self.lock:
             return self.latest_frame
+
+    def get_debug_frame(self):
+        with self.lock:
+            return self.latest_debug_frame
+    
+    def set_debug_frame(self, frame):
+        with self.lock:
+            self.latest_debug_frame = frame

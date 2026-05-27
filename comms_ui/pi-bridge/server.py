@@ -4,14 +4,15 @@ from pathlib import Path
 
 from fastapi import FastAPI, WebSocket
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import Response
 from fastapi.responses import StreamingResponse
-from serial_link import connect_serial, send_serial_command
 
+from serial_link import connect_serial
 from robot_source import get_fake_telemetry
 from camera import Camera
+from robot_controller import RobotController
 
 camera = Camera()
+robot = RobotController(camera)
 app = FastAPI()
 
 @app.middleware("http")
@@ -26,6 +27,7 @@ async def no_cache(request, call_next):
 async def startup_event():
     connect_serial()
     camera.start()
+    robot.start()
 
 BASE_DIR = Path(__file__).resolve().parent
 WEB_DIR = BASE_DIR.parent / "web-ui"
@@ -44,25 +46,13 @@ async def websocket_endpoint(websocket: WebSocket):
     async def receive_commands():
         while True:
             message = await websocket.receive_json()
-
-            if message.get("type") == "command":
+            message_type = message.get("type")
+            if message_type == "command":
                 command = message.get("command")
-                print("Received command:", command)
-                if (command == "FORWARD"):
-                    command = "L:10 R:10"
-                    send_serial_command(command)
-                elif (command == "BACKWARD"):
-                    command = "L:-10 R:-10"
-                    send_serial_command(command)
-                elif (command == "RIGHT"):
-                    command = "L:10 R:2"
-                    send_serial_command(command)
-                elif (command == "LEFT"):
-                    command = "L:2 R:10"
-                    send_serial_command(command)
-                elif (command == "STOP"):
-                    command = "L:0 R:0"
-                    send_serial_command(command)
+                robot.manual_command(command)
+            elif message_type == "mode":
+                mode = message.get("mode")
+                robot.set_mode(mode)
 
     try:
         await asyncio.gather(
@@ -72,21 +62,31 @@ async def websocket_endpoint(websocket: WebSocket):
     except Exception:
         print("WebSocket disconnected")
 
-def generate():
-	while True: 
-		frame = camera.get_frame()
-		if frame is None:
-			continue
-		_, buffer = cv2.imencode(".jpg", frame)
-		yield (
-            		b"--frame\r\n"
-            		b"Content-Type: image/jpeg\r\n\r\n" +
-            		buffer.tobytes() +
-            		b"\r\n"
-        	)
+async def mjpeg_generator():
+    while True:
+        frame = camera.get_debug_frame()
+
+        if frame is None:
+            await asyncio.sleep(0.01)
+            continue
+
+        _, buffer = cv2.imencode(".jpg", frame)
+
+        yield (
+            b"--frame\r\n"
+            b"Content-Type: image/jpeg\r\n\r\n" +
+            buffer.tobytes() +
+            b"\r\n"
+        )
+
+        await asyncio.sleep(0.03)
+
 
 @app.get("/camera-feed")
 def camera_feed():
-	return StreamingResponse(generate(),media_type="multipart/x-mixed-replace; boundary=frame")
+    return StreamingResponse(
+        mjpeg_generator(),
+        media_type="multipart/x-mixed-replace; boundary=frame"
+    )
 
 app.mount("/", StaticFiles(directory=WEB_DIR, html=True), name="web-ui")

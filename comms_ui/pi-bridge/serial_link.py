@@ -1,11 +1,12 @@
 import time
 import serial
+import threading
 
 SERIAL_PORT = "/dev/ttyUSB0"
 BAUD_RATE = 115200
 
 ser = None
-
+lock = threading.Lock()
 
 def connect_serial():
     global ser
@@ -24,5 +25,6 @@ def send_serial_command(command):
         print(f"Serial unavailable. Would have sent: {command}")
         return
 
-    print(f"Sending to ESP32: {command}")
-    ser.write((command + "\n").encode())
+    with lock:
+        print(f"Sending to ESP32: {command}")
+        ser.write((command + "\n").encode())
