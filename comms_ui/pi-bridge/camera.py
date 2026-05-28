@@ -26,9 +26,7 @@ class Camera:
 
             with self.lock:
                 self.latest_frame = frame
-                if self.latest_debug_frame is None:
-                    self.latest_debug_frame = frame
-
+                
             time.sleep(0.01)
 
     def get_frame(self):

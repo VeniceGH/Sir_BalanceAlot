@@ -34,7 +34,7 @@ function sendCommand(command) {
 function sendMode(mode) {
   ws.send(JSON.stringify({
     type: "mode",
-    command: mode,
+    mode: mode,
     time_ms: Date.now()
   }));
 
