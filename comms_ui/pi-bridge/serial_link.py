@@ -26,7 +26,6 @@ def send_serial_command(command):
         return
 
     with lock:
-        print(f"Sending to ESP32: {command}")
         ser.write((command + "\n").encode())
 
 def set_obstacle_callback(callback):

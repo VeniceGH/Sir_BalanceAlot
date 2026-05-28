@@ -191,6 +191,7 @@ class RobotController:
 
         command, duration = self.obstacle_sequence[self.sequence_index]
 
+        print(f"Obstacle sequence step {self.sequence_index}: {command} for {duration}s")
         send_serial_command(command)
 
         if time.time() - self.sequence_start_time > duration:
