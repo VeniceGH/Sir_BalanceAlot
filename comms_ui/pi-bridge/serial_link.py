@@ -28,3 +28,35 @@ def send_serial_command(command):
     with lock:
         print(f"Sending to ESP32: {command}")
         ser.write((command + "\n").encode())
+
+def set_obstacle_callback(callback):
+    global obstacle_callback
+    obstacle_callback = callback
+
+def start_serial_reader():
+    t = threading.Thread(target=serial_reader_loop, daemon=True)
+    t.start()
+
+def serial_reader_loop():
+    while True:
+        if ser is None:
+            time.sleep(0.5)
+            continue
+
+        try:
+            line = ser.readline().decode('utf-8', errors='ignore').strip()
+
+            if not line:
+                continue
+
+            print("ESP32:", line)
+
+            if line.startswith("OBSTACLE:"):
+                value = int(line.split(":")[1])
+
+                if obstacle_callback:
+                    obstacle_callback(value == 1)
+
+        except Exception as e:
+            print(f"Serial read error: {e}")
+            time.sleep(0.1)

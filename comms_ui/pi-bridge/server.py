@@ -6,7 +6,7 @@ from fastapi import FastAPI, WebSocket
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import StreamingResponse
 
-from serial_link import connect_serial
+from serial_link import connect_serial, start_serial_reader, set_obstacle_callback
 from robot_source import get_fake_telemetry
 from camera import Camera
 from robot_controller import RobotController
@@ -26,8 +26,10 @@ async def no_cache(request, call_next):
 @app.on_event("startup")
 async def startup_event():
     connect_serial()
+    start_serial_reader()
     camera.start()
     robot.start()
+    set_obstacle_callback(robot.update_obstacle)
 
 BASE_DIR = Path(__file__).resolve().parent
 WEB_DIR = BASE_DIR.parent / "web-ui"
