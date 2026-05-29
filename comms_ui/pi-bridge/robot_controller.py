@@ -20,10 +20,6 @@ class RobotController:
         self.LINE_LOST_THRESHOLD = 2
         self.ROI_Y = 150
         self.obstacle_detected = False
-        self.state = "line_follow"
-        self.obstacle_sequence = []
-        self.sequence_start_time = 0
-        self.sequence_index = 0
 
     def start(self):
         self.running = True
@@ -47,32 +43,23 @@ class RobotController:
         elif (command == "BACKWARD"):
             send_serial_command("L:-5 R:-5")
         elif (command == "RIGHT"):
-            #send_serial_command("L:5 R:2")
-            send_serial_command("L:5 R:-5")  
+            send_serial_command("L:5 R:2")  
         elif (command == "LEFT"):
-            #send_serial_command("L:2 R:5")
-            send_serial_command("L:-5 R:5")
+            send_serial_command("L:2 R:5")
         elif (command == "STOP"):
             send_serial_command("L:0 R:0")
 
-    def update_obstacle(self, is_detected: bool):
-        self.obstacle_detected = is_detected
+    def update_obstacle(self, value):
+        if value == 1:
+            self.obstacle_detected = True
+        elif value == 0:
+            self.obstacle_detected = False
 
-        if is_detected:
-            if self.state != "obstacle":
-                self.start_obstacle_avoidance()
-        else:
-            self.state = "line_follow"
-    
     def control_loop(self):
         while self.running:
             if self.mode == "line_follow":
-                if self.state == "line_follow":
+                if not self.obstacle_detected:
                     self.run_line_following()
-
-                elif self.state == "obstacle":
-                    self.run_obstacle()
-            
             time.sleep(0.01)
     
     def run_line_following(self):
@@ -163,42 +150,3 @@ class RobotController:
             )
 
         self.camera.set_debug_frame(output)
-    
-    def start_obstacle_avoidance(self):
-
-        self.obstacle_sequence = [
-
-            ("L:0 R:0", 0.5),
-
-            ("L:1.5 R:-1.5", 0.8),
-
-            ("L:1.5 R:1.5", 1.2),
-
-            ("L:-1.5 R:1.5", 0.8),
-
-            ("L:1.5 R:1.5", 1.5),
-        ]
-
-        self.sequence_index = 0
-        self.sequence_start_time = time.time()
-
-        self.state = "obstacle"
-
-    def run_obstacle(self):
-
-        if self.sequence_index >= len(self.obstacle_sequence):
-
-            self.state = "line_follow"
-            return
-
-        command, duration = self.obstacle_sequence[self.sequence_index]
-
-        print(f"Obstacle sequence step {self.sequence_index}: {command} for {duration}s")
-        send_serial_command(command)
-
-        if time.time() - self.sequence_start_time > duration:
-
-            self.sequence_index += 1
-            self.sequence_start_time = time.time()
-
-

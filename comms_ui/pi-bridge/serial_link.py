@@ -54,7 +54,7 @@ def serial_reader_loop():
                 value = int(line.split(":")[1])
 
                 if obstacle_callback:
-                    obstacle_callback(value == 1)
+                    obstacle_callback(value)
 
         except Exception as e:
             print(f"Serial read error: {e}")
