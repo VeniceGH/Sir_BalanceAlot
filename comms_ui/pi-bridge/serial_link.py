@@ -26,6 +26,7 @@ def send_serial_command(command):
         return
 
     with lock:
+        print(f"Sending command: {command}")
         ser.write((command + "\n").encode())
 
 def set_obstacle_callback(callback):
