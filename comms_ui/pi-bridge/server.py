@@ -6,7 +6,7 @@ from fastapi import FastAPI, WebSocket
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import StreamingResponse
 
-from serial_link import connect_serial, start_serial_reader, set_obstacle_callback
+from serial_link import connect_serial, start_serial_reader, set_obstacle_callback, send_serial_command
 from robot_source import get_fake_telemetry
 from camera import Camera
 from robot_controller import RobotController
@@ -55,6 +55,7 @@ async def websocket_endpoint(websocket: WebSocket):
             elif message_type == "mode":
                 mode = message.get("mode")
                 robot.set_mode(mode)
+                send_serial_command(f"MODE:{mode.upper()}")
 
     try:
         await asyncio.gather(
