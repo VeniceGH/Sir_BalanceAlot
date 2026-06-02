@@ -7,106 +7,142 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
 
-  <link rel="stylesheet" href="style.css?build=20">
+  <link rel="stylesheet" href="style.css?build=30">
 </head>
 <body>
-  <h1>Sir BalanceAlot Dashboard</h1>
+  <div class="dashboard">
+    <header class="topbar">
+      <div class="title-block">
+        <h1>Sir BalanceAlot Dashboard</h1>
+        <p id="status" class="connected-dot">Connected</p>
+      </div>
 
-  <p id="status">Connecting...</p>
+      <div class="telemetry-bar">
+        <div class="telemetry-item angle">
+          <span class="telemetry-label">Angle</span>
+          <span class="telemetry-value"><span id="angle">--</span>°</span>
+        </div>
 
-  <div class="cards">
-    <div class="card">Angle: <span id="angle">--</span>°</div>
-    <div class="card">Gyro: <span id="gyro">--</span>°/s</div>
-    <div class="card">Left Motor: <span id="left">--</span></div>
-    <div class="card">Right Motor: <span id="right">--</span></div>
-    <div class="card">Battery: <span id="battery">--</span> V</div>
-    <div class="card">Mode: <span id="mode">--</span></div>
+        <div class="telemetry-item gyro">
+          <span class="telemetry-label">Gyro</span>
+          <span class="telemetry-value"><span id="gyro">--</span>°/s</span>
+        </div>
+
+        <div class="telemetry-item motor-left">
+          <span class="telemetry-label">Left Motor</span>
+          <span class="telemetry-value" id="left">--</span>
+        </div>
+
+        <div class="telemetry-item motor-right">
+          <span class="telemetry-label">Right Motor</span>
+          <span class="telemetry-value" id="right">--</span>
+        </div>
+
+        <div class="telemetry-item battery">
+          <span class="telemetry-label">Battery</span>
+          <span class="telemetry-value"><span id="battery">--</span> V</span>
+        </div>
+
+        <div class="telemetry-item mode">
+          <span class="telemetry-label">Mode</span>
+          <span class="telemetry-value" id="mode">--</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-grid">
+      <section class="camera-section">
+        <h2>Robot Camera Feed</h2>
+        <div class="camera-box">
+          <img id="camera-feed" src="/camera-feed" alt="Live robot camera feed">
+        </div>
+        <p class="camera-note">Showing the robot's forward-facing camera view.</p>
+      </section>
+
+      <section class="controls-panel">
+        <h2>Manual Controls</h2>
+
+        <div class="system-controls">
+          <div class="control-option">
+            <button onclick="sendMode('manual')">
+              <span class="btn-title">Manual</span>
+            </button>
+            <span class="btn-desc">Enable manual control</span>
+          </div>
+
+          <div class="control-option">
+            <button onclick="sendMode('line_follow')">
+              <span class="btn-title">Line Follow</span>
+            </button>
+            <span class="btn-desc">Enable line following</span>
+          </div>
+
+          <div class="control-option">
+            <button class="estop" onclick="sendCommand('ESTOP')">
+              <span class="btn-title">Emergency Stop</span>
+            </button>
+            <span class="btn-desc">Disable motors immediately</span>
+          </div>
+        </div>
+
+        <div class="gamepad">
+        <button
+          class="control-btn forward"
+          title="Move forward"
+          onmousedown="sendCommand('FORWARD')"
+          onmouseup="sendCommand('STOP')"
+          onmouseleave="sendCommand('STOP')">
+          ▲
+        </button>
+
+        <button
+          class="control-btn turn-left"
+          title="Turn left"
+          onmousedown="sendCommand('LEFT')"
+          onmouseup="sendCommand('STOP')"
+          onmouseleave="sendCommand('STOP')">
+          ↶
+        </button>
+
+        <button
+          class="control-btn stop"
+          onclick="sendCommand('STOP')">
+          Stop
+        </button>
+
+        <button
+          class="control-btn turn-right"
+          title="Turn right"
+          onmousedown="sendCommand('RIGHT')"
+          onmouseup="sendCommand('STOP')"
+          onmouseleave="sendCommand('STOP')">
+          ↷
+        </button>
+
+        <button
+          class="control-btn backward"
+          title="Move backward"
+          onmousedown="sendCommand('BACKWARD')"
+          onmouseup="sendCommand('STOP')"
+          onmouseleave="sendCommand('STOP')">
+          ▼
+        </button>
+      </div>
+      </section>
+
+      <section class="event-panel">
+        <div class="event-title-row">
+          <div class="event-heading">
+            <h2>Event Log</h2>
+            <span id="active-package-count" class="event-count">0 active</span>
+          </div>
+        </div>
+        <div id="event-list"></div>
+        <div id="no-events" class="no-events">No package drop detected.</div>
+      </section>
+    </main>
   </div>
 
-  <div class="camera-section">
-    <h2>Robot Camera Feed</h2>
-
-    <div class="camera-box">
-      <img id="camera-feed" src="/camera-feed" alt="Live robot camera feed">
-    </div>
-
-    <p class="camera-note">Showing the robot's forward-facing camera view.</p>
-  </div>
-
-  <div class="controls">
-    <h2>Manual Controls</h2>
-
-    <div class="gamepad">
-      <button
-        class="control-btn forward"
-        title="Move the robot forward"
-        onmousedown="sendCommand('FORWARD')"
-        onmouseup="sendCommand('STOP')"
-        onmouseleave="sendCommand('STOP')"
-        ontouchstart="sendCommand('FORWARD')"
-        ontouchend="sendCommand('STOP')">
-        ▲
-      </button>
-
-      <button
-        class="control-btn turn-left"
-        title="Turn the robot left"
-        onmousedown="sendCommand('LEFT')"
-        onmouseup="sendCommand('STOP')"
-        onmouseleave="sendCommand('STOP')"
-        ontouchstart="sendCommand('LEFT')"
-        ontouchend="sendCommand('STOP')">
-        ↶
-      </button>
-
-      <button
-        class="control-btn stop"
-        title="Stop all movement but keep the robot enabled"
-        onclick="sendCommand('STOP')">
-        Stop
-      </button>
-
-      <button
-        class="control-btn turn-right"
-        title="Turn the robot right"
-        onmousedown="sendCommand('RIGHT')"
-        onmouseup="sendCommand('STOP')"
-        onmouseleave="sendCommand('STOP')"
-        ontouchstart="sendCommand('RIGHT')"
-        ontouchend="sendCommand('STOP')">
-        ↷
-      </button>
-
-      <button
-        class="control-btn backward"
-        title="Move the robot backward"
-        onmousedown="sendCommand('BACKWARD')"
-        onmouseup="sendCommand('STOP')"
-        onmouseleave="sendCommand('STOP')"
-        ontouchstart="sendCommand('BACKWARD')"
-        ontouchend="sendCommand('STOP')">
-        ▼
-      </button>
-    </div>
-
-    <div class="system-controls">
-      <button onclick="sendMode('manual')">
-        <span class="btn-title">Manual</span>
-        <span class="btn-desc">Enable manual control</span>
-      </button>
-
-      <button onclick="sendMode('line_follow')">
-        <span class="btn-title">Line Follow</span>
-        <span class="btn-desc">Enable line following mode</span>
-      </button>
-
-      <button class="estop" onclick="sendCommand('ESTOP')">
-        <span class="btn-title">Emergency Stop</span>
-        <span class="btn-desc">Disable motors</span>
-      </button>
-    </div>
-  </div>
-
-  <script src="app.js?build=20"></script>
+  <script src="app.js?build=30"></script>
 </body>
 </html>

@@ -2,12 +2,21 @@ const statusEl = document.getElementById("status");
 
 const ws = new WebSocket(`ws://${window.location.host}/ws`);
 
+let previousPackageDropped = false;
+let packageDropCount = 0;
+
 ws.onopen = () => {
   statusEl.textContent = "Connected";
 };
 
 ws.onmessage = (event) => {
   const data = JSON.parse(event.data);
+
+  if (data.package_dropped && !previousPackageDropped) {
+    addPackageDropEvent(data);
+  }
+
+  previousPackageDropped = data.package_dropped;
 
   document.getElementById("angle").textContent = data.angle_deg.toFixed(2);
   document.getElementById("gyro").textContent = data.gyro_dps.toFixed(2);
@@ -20,6 +29,59 @@ ws.onmessage = (event) => {
 ws.onclose = () => {
   statusEl.textContent = "Disconnected";
 };
+
+function addPackageDropEvent(data) {
+  packageDropCount += 1;
+
+  const now = new Date();
+  const eventList = document.getElementById("event-list");
+  const noEvents = document.getElementById("no-events");
+
+  noEvents.classList.add("hidden");
+
+  const eventCard = document.createElement("div");
+  eventCard.className = "event-card event-green";
+
+  eventCard.innerHTML = `
+    <div class="event-card-main">
+      <div class="event-icon">📦</div>
+
+      <div class="event-text">
+        <div class="event-title">Package dropped #${packageDropCount}</div>
+        <div class="event-detail">Time: ${data.package_drop_time || now.toLocaleTimeString()}</div>
+        <div class="event-detail">Mode: ${data.mode || "Unknown"}</div>
+      </div>
+
+      <button class="clear-event-btn">Clear</button>
+    </div>
+  `;
+
+  eventCard.querySelector(".clear-event-btn").addEventListener("click", () => {
+    eventCard.remove();
+    updateActivePackageCount();
+
+    if (eventList.children.length === 0) {
+      noEvents.classList.remove("hidden");
+    }
+  });
+
+  eventList.appendChild(eventCard);
+  updateActivePackageCount();
+
+  setTimeout(() => {
+    if (eventCard.isConnected) {
+      eventCard.classList.remove("event-green");
+      eventCard.classList.add("event-orange");
+    }
+  }, 5000);
+
+  setTimeout(() => {
+    if (eventCard.isConnected) {
+      eventCard.classList.remove("event-orange");
+      eventCard.classList.add("event-red");
+    }
+  }, 10000);
+}
 
 function sendCommand(command) {
   ws.send(JSON.stringify({
@@ -39,4 +101,14 @@ function sendMode(mode) {
   }));
 
   console.log("Sent mode:", mode);
+}
+
+function updateActivePackageCount() {
+  const eventList = document.getElementById("event-list");
+  const countEl = document.getElementById("active-package-count");
+
+  if (!countEl) return;
+
+  const activeCount = eventList.children.length;
+  countEl.textContent = `${activeCount} active`;
 }
