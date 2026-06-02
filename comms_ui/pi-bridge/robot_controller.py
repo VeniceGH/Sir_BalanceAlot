@@ -33,6 +33,7 @@ class RobotController:
 
         if mode == "manual":
             send_serial_command("L:0 R:0")
+            self.obstacle_detected = False
 
     def manual_command(self, command):
         if self.mode != "manual":
