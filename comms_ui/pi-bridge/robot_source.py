@@ -12,5 +12,6 @@ def get_fake_telemetry():
         "motor_left": int(120 + random.uniform(-15, 15)),
         "motor_right": int(120 + random.uniform(-15, 15)),
         "battery_v": round(7.6 + random.uniform(-0.05, 0.05), 2),
-        "mode": "SIM"
+        "mode": "SIM",
+        "package_dropped": random.random() < 0.02
     }
