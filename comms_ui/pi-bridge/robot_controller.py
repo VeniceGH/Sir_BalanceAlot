@@ -37,6 +37,8 @@ class RobotController:
 
     def start(self):
         self.running = True
+        send_serial_command("MODE:MANUAL")
+        send_serial_command("L:0 R:0")
         self.thread = threading.Thread(target=self.control_loop, daemon=True)
         self.thread.start()
 
