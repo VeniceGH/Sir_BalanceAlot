@@ -5,7 +5,10 @@ import time
 class Camera:
     def __init__(self):
         self.picam2 = Picamera2()
-        config = self.picam2.create_video_configuration( main={"format": "RGB888","size": (320, 240)}, buffer_count=4)
+
+        config = self.picam2.create_video_configuration()
+        config["sensor_mode"] = {"size:": (1640, 1232)}
+        config["main"] = {"size": (320, 240), "format": "RGB888"}
         self.picam2.configure(config)
 
         self.latest_frame = None
