@@ -164,7 +164,7 @@ class RobotController:
         line_detected = near_detected
 
         if near_detected:
-            combined_error = (0.7*near_error) + (0.3*far_error)
+            combined_error = (0.6*near_error) + (0.4*far_error)
             derivative = combined_error - self.previous_error
             self.previous_error = combined_error
 
