@@ -10,15 +10,18 @@ class RobotController:
         self.mode = "manual"
         self.running = False
         self.thread = None
-        self.FRAME_CENTER_X = 320 #160
+        self.FRAME_CENTER_X = 160 #320
         self.speed = 1.2
         self.kp = 0.35
         self.kd = 0.15
         self.previous_error = 0
-        self.last_turn = 0
+        self.last_path_direction = 0
         self.lost_frames = 0
         self.LINE_LOST_THRESHOLD = 2
-        self.ROI_Y = 390 #150
+        self.FAR_ROI_Y1 = 80
+        self.FAR_ROI_Y2 = 150
+        self.NEAR_ROI_Y1 = 150
+        self.NEAR_ROI_Y2 = 240
         self.obstacle_detected = False
         self.obstacle_report_pending = False
         self.qr_detector = cv2.QRCodeDetector()
@@ -104,54 +107,75 @@ class RobotController:
         thresh = cv2.erode(thresh, kernel, iterations=1)
         thresh = cv2.dilate(thresh, kernel, iterations=2)
 
-        #roi = thresh[self.ROI_Y:240,:]
-        roi = thresh[self.ROI_Y:480,:]
-
-        contours, _ = cv2.findContours(roi, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
         output = frame.copy()
 
-        line_detected = False
+        far_roi = thresh[self.FAR_ROI_Y1:self.FAR_ROI_Y2,:]
+        near_roi = thresh[self.NEAR_ROI_Y1:self.NEAR_ROI_Y2,:]
+        far_contours, _ = cv2.findContours(far_roi, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        near_contours, _ = cv2.findContours(near_roi, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-        if len(contours) > 0:
-            largest = max(contours, key=cv2.contourArea)
+        near_detected = False
+        far_detected = False
+        near_error = 0
+        far_error = 0
 
-            if cv2.contourArea(largest) > 500:
-                line_detected = True
+        if len(far_contours) > 0:
+            far_largest = max(far_contours, key=cv2.contourArea)
+            if cv2.contourArea(far_largest) > 200:
+                far_detected = True
 
-                largest_shifted = largest.copy()
-                largest_shifted[:,:,1] += self.ROI_Y
-                cv2.drawContours(output, [largest_shifted], -1, (0, 255, 0), 2)
+                far_shifted = far_largest.copy()
+                far_shifted[:,:,1] += self.FAR_ROI_Y1
+                cv2.drawContours(output, [far_shifted], -1, (255, 0, 0), 2)
 
-                M = cv2.moments(largest)
+                M = cv2.moments(far_largest)
                 if M["m00"] != 0:
-                    cx = int(M['m10']/M['m00'])
-                    cy = int(M['m01']/M['m00']) + self.ROI_Y
+                    far_cx = int(M['m10']/M['m00'])
+                    far_cy = int(M['m01']/M['m00']) + self.FAR_ROI_Y1
 
-                    error = (cx - self.FRAME_CENTER_X) / self.FRAME_CENTER_X
+                    far_error = (far_cx - self.FRAME_CENTER_X) / self.FRAME_CENTER_X
 
-                    cv2.circle(output, (cx,cy), 8, (0, 0, 255), -1)
-                    cv2.putText(output, f"Error: {error}", (20, 40),
-                                cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 255), 2)
-                    
-                    derivative = error - self.previous_error
+                    cv2.circle(output, (far_cx,far_cy), 8, (255, 0, 255), -1)
 
-                    self.previous_error = error
+                    if far_error < -0.1:
+                        self.last_path_direction = -1
+                    elif far_error > 0.1:
+                        self.last_path_direction = 1
+        
+        if len(near_contours) > 0:
+            near_largest = max(near_contours, key=cv2.contourArea)
 
-                    turn = (self.kp*error) + (self.kd*derivative)
+            if cv2.contourArea(near_largest) > 500:
+                near_detected = True
 
-                    self.last_turn = turn
+                near_shifted = near_largest.copy()
+                near_shifted[:,:,1] += self.NEAR_ROI_Y1
+                cv2.drawContours(output, [near_shifted], -1, (0, 255, 0), 2)
 
-                    left_speed = self.speed + turn
-                    right_speed = self.speed - turn
+                M = cv2.moments(near_largest)
+                if M["m00"] != 0:
+                    near_cx = int(M['m10']/M['m00'])
+                    near_cy = int(M['m01']/M['m00']) + self.NEAR_ROI_Y1
 
-                    left_speed = max(0, min(5, left_speed))
-                    right_speed = max(0, min(5, right_speed))
+                    near_error = (near_cx - self.FRAME_CENTER_X) / self.FRAME_CENTER_X
 
-                    if my_generation != self.control_generation:
-                        return
+                    cv2.circle(output, (near_cx,near_cy), 8, (0, 0, 255), -1)
 
-                    send_serial_command(f"L:{left_speed:.2f} R:{right_speed:.2f}")
+        line_detected = near_detected
+
+        if near_detected:
+            combined_error = (0.75*near_error) + (0.25*far_error)
+            derivative = combined_error - self.previous_error
+            self.previous_error = combined_error
+
+            turn = (self.kp*combined_error) + (self.kd*derivative)
+            left_speed = self.speed + turn
+            right_speed = self.speed - turn
+            left_speed = max(-5, min(5, left_speed))
+            right_speed = max(-5, min(5, right_speed))
+            if my_generation != self.control_generation:
+                return
+            send_serial_command(f"L:{left_speed:.2f} R:{right_speed:.2f}")
 
         if not line_detected:
             self.lost_frames += 1
@@ -160,7 +184,7 @@ class RobotController:
 
         if self.lost_frames > self.LINE_LOST_THRESHOLD:
 
-            if self.last_turn > 0:
+            if self.last_path_direction > 0:
                 left = self.speed
                 right = -self.speed
             else:
@@ -184,6 +208,32 @@ class RobotController:
                 (0, 0, 255),
                 2
             )
+
+        cv2.rectangle(
+            output,
+            (0, self.FAR_ROI_Y1),
+            (320, self.FAR_ROI_Y2),
+            (255, 255, 0),
+            2
+        )
+
+        cv2.rectangle(
+            output,
+            (0, self.NEAR_ROI_Y1),
+            (320, self.NEAR_ROI_Y2),
+            (255, 0, 0),
+            2
+        )
+
+        cv2.putText(
+            output,
+            f"Path Dir: {self.last_path_direction}",
+            (20, 70),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.7,
+            (255, 255, 255),
+            2
+        )
 
         self.camera.set_debug_frame(output)
     
