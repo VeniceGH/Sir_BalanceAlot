@@ -11,9 +11,9 @@ class RobotController:
         self.running = False
         self.thread = None
         self.FRAME_CENTER_X = 160 #320
-        self.speed = 1.2
-        self.kp = 0.35
-        self.kd = 0.15
+        self.speed = 1
+        self.kp = 0.45
+        self.kd = 0.12
         self.previous_error = 0
         self.last_path_direction = 0
         self.lost_frames = 0
