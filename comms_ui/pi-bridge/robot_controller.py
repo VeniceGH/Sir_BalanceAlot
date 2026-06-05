@@ -10,7 +10,7 @@ class RobotController:
         self.mode = "manual"
         self.running = False
         self.thread = None
-        self.FRAME_CENTER_X = 160
+        self.FRAME_CENTER_X = 320 #160
         self.speed = 1.5
         self.kp = 0.35
         self.kd = 0.15
@@ -18,7 +18,7 @@ class RobotController:
         self.last_turn = 0
         self.lost_frames = 0
         self.LINE_LOST_THRESHOLD = 2
-        self.ROI_Y = 150
+        self.ROI_Y = 390 #150
         self.obstacle_detected = False
         self.obstacle_report_pending = False
         self.qr_detector = cv2.QRCodeDetector()
@@ -104,7 +104,8 @@ class RobotController:
         thresh = cv2.erode(thresh, kernel, iterations=1)
         thresh = cv2.dilate(thresh, kernel, iterations=2)
 
-        roi = thresh[self.ROI_Y:240,:]
+        #roi = thresh[self.ROI_Y:240,:]
+        roi = thresh[self.ROI_Y:480,:]
 
         contours, _ = cv2.findContours(roi, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
