@@ -67,7 +67,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
 async def mjpeg_generator():
     while True:
-        if robot.mode == "manual":
+        if robot.autonomy_mode == "manual":
             frame = camera.get_frame()
         else:
             frame = camera.get_debug_frame()
