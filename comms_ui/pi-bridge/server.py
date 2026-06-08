@@ -6,7 +6,7 @@ from fastapi import FastAPI, WebSocket
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import StreamingResponse
 
-from serial_link import connect_serial, start_serial_reader, set_obstacle_callback, send_serial_command
+from serial_link import connect_serial, start_serial_reader, set_obstacle_callback, send_serial_command, start_serial_writer
 from robot_source import get_fake_telemetry
 from camera import Camera
 from robot_controller import RobotController
@@ -27,6 +27,7 @@ async def no_cache(request, call_next):
 async def startup_event():
     connect_serial()
     start_serial_reader()
+    start_serial_writer()
     camera.start()
     robot.start()
     set_obstacle_callback(robot.update_obstacle)

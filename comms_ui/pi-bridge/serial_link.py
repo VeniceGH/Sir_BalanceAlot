@@ -10,7 +10,6 @@ ser = None
 latest_command = None
 last_sent_command = None
 command_lock = threading.Lock()
-running = True
 
 obstacle_callback = None
 
@@ -43,7 +42,7 @@ def serial_writer_loop():
     global latest_command
     global last_sent_command
 
-    while running:
+    while True:
         if ser is None:
             time.sleep(0.5)
             continue
