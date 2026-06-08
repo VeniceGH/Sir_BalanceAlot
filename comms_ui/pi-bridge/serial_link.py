@@ -56,6 +56,7 @@ def serial_writer_loop():
             
         if cmd_to_send:
             try:
+                print(f"Sending serial command: {cmd_to_send}")
                 ser.write((cmd_to_send + "\n").encode())
 
             except Exception as e:
@@ -82,8 +83,6 @@ def serial_reader_loop():
 
             if not line:
                 continue
-
-            print("ESP32:", line)
 
             if line.startswith("OBSTACLE:"):
                 value = int(line.split(":")[1])
