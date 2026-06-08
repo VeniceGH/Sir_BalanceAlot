@@ -9,6 +9,7 @@ class Camera:
         config = self.picam2.create_video_configuration()
         config["sensor_mode"] = {"size:": (1640, 1232)}
         config["main"] = {"size": (320, 240), "format": "RGB888"}
+        config["buffer_count"] = 1
         self.picam2.configure(config)
 
         self.latest_frame = None

@@ -11,9 +11,9 @@ class RobotController:
         self.running = False
         self.thread = None
         self.FRAME_CENTER_X = 160 #320
-        self.speed = 1
-        self.kp = 0.45
-        self.kd = 0.12
+        self.speed = 1.2
+        self.kp = 1
+        self.kd = 0.0
         self.previous_error = 0
         self.last_path_direction = 0
         self.lost_frames = 0
@@ -102,10 +102,6 @@ class RobotController:
         
         gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
         _, thresh = cv2.threshold(gray, 80, 255, cv2.THRESH_BINARY_INV)
-
-        kernel = np.ones((3,3), np.uint8)
-        thresh = cv2.erode(thresh, kernel, iterations=1)
-        thresh = cv2.dilate(thresh, kernel, iterations=2)
 
         output = frame.copy()
 
