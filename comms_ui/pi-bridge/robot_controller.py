@@ -239,7 +239,7 @@ class RobotController:
             self.approach_start_time = time.time()
             self.obstacle_report_pending = True
             send_serial_command("MODE:OBSTACLE_APPROACH")
-            send_serial_command("L:0.3 R:0.3")
+            send_serial_command("L:0.5 R:0.5")
 
         output = frame.copy()
 
