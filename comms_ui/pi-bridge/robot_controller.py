@@ -7,7 +7,7 @@ from serial_link import send_serial_command
 class RobotController:
     def __init__(self, camera):
         self.camera = camera
-        self.mode = "manual"
+        self.autonomy_mode = "manual"
         self.running = False
         self.thread = None
         self.FRAME_CENTER_X = 160 #320
@@ -22,7 +22,6 @@ class RobotController:
         self.FAR_ROI_Y2 = 150
         self.NEAR_ROI_Y1 = 150
         self.NEAR_ROI_Y2 = 240
-        self.obstacle_detected = False
         self.obstacle_report_pending = False
         self.qr_detector = cv2.QRCodeDetector()
         self.approach_started = False
@@ -37,6 +36,7 @@ class RobotController:
         self.last_marker_id = None
         self.last_marker_time = 0
         self.marker_detected = False
+        self.obstacle_mode = "NONE"
 
     def start(self):
         self.running = True
@@ -48,16 +48,16 @@ class RobotController:
     def set_mode(self, mode):
         with self.mode_lock:
             print(f"Switchinng mode to: {mode}")
-            self.mode = mode
+            self.autonomy_mode = mode
             self.control_generation += 1
         self.previous_error = 0
 
         if mode == "manual":
             send_serial_command("L:0 R:0")
-            self.obstacle_detected = False
+            self.obstacle_mode = "NONE"
 
     def manual_command(self, command):
-        if self.mode != "manual":
+        if self.autonomy_mode != "manual":
             return
         
         if (command == "FORWARD"):
@@ -73,19 +73,19 @@ class RobotController:
 
     def update_obstacle(self, value):
         if value == 1:
-            self.obstacle_detected = True
+            self.obstacle_mode = "OBSTACLE_APPROACH"
         elif value == 0:
-            self.obstacle_detected = False
+            self.obstacle_mode = "NONE"
 
     def control_loop(self):
         while self.running:
-            if self.mode == "line_follow":
+            if self.autonomy_mode == "line_follow":
 
                 frame = self.camera.get_frame()
                 if frame is None:
                     continue
 
-                if not self.obstacle_detected:
+                if self.obstacle_mode == "NONE":
                     self.marker_counter += 1
                     if self.marker_counter % 5 == 0:
                         self.detect_markers(frame)
@@ -93,8 +93,10 @@ class RobotController:
                         self.run_line_following(frame)
                     else:
                         self.interpret_marker(frame)
-                else:
+                elif self.obstacle_mode == "OBSTACLE_APPROACH":
                     self.approach_obstacle(frame)
+                elif self.obstacle_mode == "OBSTACLE_AVOID":
+                    continue
             time.sleep(0.01)
     
     def run_line_following(self, frame):
@@ -271,6 +273,7 @@ class RobotController:
                 self.last_qr_data = data
                 self.approach_started = False
                 send_serial_command(f"MODE:OBSTACLE_AVOID")
+                self.obstacle_mode = "OBSTACLE_AVOID"
                 cv2.putText(
                     output,
                     data,
@@ -286,6 +289,7 @@ class RobotController:
         if time.time() - self.approach_start_time > 60:
             self.last_qr_data = "UNKNOWN"
             send_serial_command(f"MODE:OBSTACLE_AVOID")
+            self.obstacle_mode = "OBSTACLE_AVOID"
             self.approach_started = False
     
         self.camera.set_debug_frame(output)
