@@ -6,7 +6,13 @@ SERIAL_PORT = "/dev/ttyUSB0"
 BAUD_RATE = 115200
 
 ser = None
-lock = threading.Lock()
+
+latest_command = None
+last_sent_command = None
+command_lock = threading.Lock()
+running = True
+
+obstacle_callback = None
 
 def connect_serial():
     global ser
@@ -21,13 +27,42 @@ def connect_serial():
 
 
 def send_serial_command(command):
+    global latest_command
+
     if ser is None:
-        print(f"Serial unavailable. Would have sent: {command}")
         return
 
-    with lock:
-        print(f"Sending command: {command}")
-        ser.write((command + "\n").encode())
+    with command_lock:
+        latest_command = command
+
+def start_serial_writer():
+    t = threading.Thread(target=serial_writer_loop, daemon=True)
+    t.start()  
+
+def serial_writer_loop():
+    global latest_command
+    global last_sent_command
+
+    while running:
+        if ser is None:
+            time.sleep(0.5)
+            continue
+
+        cmd_to_send = None
+
+        with command_lock:
+            if latest_command is not None and latest_command != last_sent_command:
+                cmd_to_send = latest_command
+                last_sent_command = latest_command
+            
+        if cmd_to_send:
+            try:
+                ser.write((cmd_to_send + "\n").encode())
+
+            except Exception as e:
+                print(f"Serial write error: {e}")
+        
+        time.sleep(0.1)
 
 def set_obstacle_callback(callback):
     global obstacle_callback
