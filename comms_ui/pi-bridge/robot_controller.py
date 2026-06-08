@@ -113,14 +113,12 @@ class RobotController:
         near_contours, _ = cv2.findContours(near_roi, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
         near_detected = False
-        far_detected = False
         near_error = 0
         far_error = 0
 
         if len(far_contours) > 0:
             far_largest = max(far_contours, key=cv2.contourArea)
             if cv2.contourArea(far_largest) > 200:
-                far_detected = True
 
                 far_shifted = far_largest.copy()
                 far_shifted[:,:,1] += self.FAR_ROI_Y1
