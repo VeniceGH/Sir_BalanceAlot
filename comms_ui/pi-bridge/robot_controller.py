@@ -61,13 +61,13 @@ class RobotController:
             return
         
         if (command == "FORWARD"):
-            send_serial_command("L:5 R:5")
+            send_serial_command("L:2 R:2")
         elif (command == "BACKWARD"):
-            send_serial_command("L:-5 R:-5")
+            send_serial_command("L:-2 R:-2")
         elif (command == "RIGHT"):
-            send_serial_command("L:5 R:-5")  
+            send_serial_command("L:2 R:-2")  
         elif (command == "LEFT"):
-            send_serial_command("L:-5 R:5")
+            send_serial_command("L:-2 R:2")
         elif (command == "STOP"):
             send_serial_command("L:0 R:0")
 
