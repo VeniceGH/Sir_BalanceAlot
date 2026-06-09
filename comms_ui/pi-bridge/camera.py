@@ -7,7 +7,7 @@ class Camera:
         self.picam2 = Picamera2()
 
         config = self.picam2.create_video_configuration()
-        config["sensor_mode"] = {"size:": (1640, 1232)}
+        config["sensor_mode"] = {"size": (1640, 1232)}
         config["main"] = {"size": (320, 240), "format": "RGB888"}
         config["buffer_count"] = 3
         self.picam2.configure(config)
@@ -17,12 +17,14 @@ class Camera:
         self.lock = threading.Lock()
         self.running = False
 
+        self.thread = None
+
     def start(self):
         self.picam2.start()
         self.running = True
 
-        thread = threading.Thread(target=self._loop, daemon=True)
-        thread.start()
+        self.thread = threading.Thread(target=self._loop)
+        self.thread.start()
 
     def _loop(self):
         while self.running:
@@ -44,3 +46,11 @@ class Camera:
     def set_debug_frame(self, frame):
         with self.lock:
             self.latest_debug_frame = frame
+
+    def stop(self):
+        self.running = False
+        if self.thread:
+            self.thread.join()
+
+        self.picam2.stop()
+        self.picam2.close()

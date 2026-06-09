@@ -13,16 +13,35 @@ command_lock = threading.Lock()
 
 obstacle_callback = None
 
+serial_writer = None
+serial_reader = None
+
+running = False
+
 def connect_serial():
-    global ser
+    global ser, running
 
     try:
         ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
+        running = True
         time.sleep(2)
         print(f"Serial connected on {SERIAL_PORT}")
     except Exception as e:
         ser = None
         print(f"Serial not connected: {e}")
+
+def start_serial():
+    global running
+    global serial_writer
+    global serial_reader
+
+    running = True
+
+    serial_writer = threading.Thread(target=serial_writer_loop)
+    serial_reader = threading.Thread(target=serial_reader_loop)
+
+    serial_writer.start()
+    serial_reader.start()
 
 
 def send_serial_command(command):
@@ -34,15 +53,11 @@ def send_serial_command(command):
     with command_lock:
         latest_command = command
 
-def start_serial_writer():
-    t = threading.Thread(target=serial_writer_loop, daemon=True)
-    t.start()  
-
 def serial_writer_loop():
     global latest_command
     global last_sent_command
 
-    while True:
+    while running:
         if ser is None:
             time.sleep(0.5)
             continue
@@ -68,12 +83,8 @@ def set_obstacle_callback(callback):
     global obstacle_callback
     obstacle_callback = callback
 
-def start_serial_reader():
-    t = threading.Thread(target=serial_reader_loop, daemon=True)
-    t.start()
-
 def serial_reader_loop():
-    while True:
+    while running:
         if ser is None:
             time.sleep(0.5)
             continue
@@ -93,3 +104,15 @@ def serial_reader_loop():
         except Exception as e:
             print(f"Serial read error: {e}")
             time.sleep(0.1)
+
+def stop():
+    global running
+    running = False
+    if serial_writer:
+        serial_writer.join()
+    if serial_reader:
+        serial_reader.join()
+    if ser:
+        ser.close()
+
+    

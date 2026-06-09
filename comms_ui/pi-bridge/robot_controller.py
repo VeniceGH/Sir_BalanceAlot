@@ -11,7 +11,7 @@ class RobotController:
         self.running = False
         self.thread = None
         self.FRAME_CENTER_X = 160 #320
-        self.speed = 1.2
+        self.speed = 5
         self.kp = 1
         self.kd = 0.0
         self.previous_error = 0
@@ -42,7 +42,7 @@ class RobotController:
         self.running = True
         send_serial_command("MODE:MANUAL")
         send_serial_command("L:0 R:0")
-        self.thread = threading.Thread(target=self.control_loop, daemon=True)
+        self.thread = threading.Thread(target=self.control_loop)
         self.thread.start()
 
     def set_mode(self, mode):
@@ -61,13 +61,13 @@ class RobotController:
             return
         
         if (command == "FORWARD"):
-            send_serial_command("L:2 R:2")
+            send_serial_command(f"L:{self.speed} R:{self.speed}")
         elif (command == "BACKWARD"):
-            send_serial_command("L:-2 R:-2")
+            send_serial_command(f"L:-{self.speed} R:-{self.speed}")
         elif (command == "RIGHT"):
-            send_serial_command("L:2 R:-2")  
+            send_serial_command(f"L:{self.speed} R:-{self.speed}")  
         elif (command == "LEFT"):
-            send_serial_command("L:-2 R:2")
+            send_serial_command(f"L:-{self.speed} R:{self.speed}")
         elif (command == "STOP"):
             send_serial_command("L:0 R:0")
 
@@ -366,3 +366,9 @@ class RobotController:
             )
 
         self.camera.set_debug_frame(output)
+
+    def stop(self):
+        self.running = False
+        if self.thread:
+            self.thread.join()
+        send_serial_command("L:0 R:0")
