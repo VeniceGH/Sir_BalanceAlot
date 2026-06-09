@@ -112,3 +112,39 @@ function updateActivePackageCount() {
   const activeCount = eventList.children.length;
   countEl.textContent = `${activeCount} active`;
 }
+
+const tuningInputs = {
+  setpoint: document.getElementById("tune-setpoint"),
+  kp: document.getElementById("tune-kp"),
+  kd: document.getElementById("tune-kd"),
+  speed: document.getElementById("tune-speed"),
+  auto_kp: document.getElementById("tune-auto-kp"),
+  auto_ki: document.getElementById("tune-auto-ki"),
+  auto_kd: document.getElementById("tune-auto-kd"),
+};
+
+function sendTuning(name, value) {
+  if (ws.readyState !== WebSocket.OPEN) return;
+
+  ws.send(JSON.stringify({
+    type: "tuning",
+    name: name,
+    value: Number(value),
+    time_ms: Date.now()
+  }));
+
+  console.log("Sent tuning:", name, value);
+}
+
+Object.entries(tuningInputs).forEach(([name, input]) => {
+  input.addEventListener("change", () => {
+    sendTuning(name, input.value);
+  });
+
+  input.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      sendTuning(name, input.value);
+      input.blur();
+    }
+  });
+});

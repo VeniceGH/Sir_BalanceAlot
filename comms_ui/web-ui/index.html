@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
 
-  <link rel="stylesheet" href="style.css?build=30">
+  <link rel="stylesheet" href="style.css?build=31">
 </head>
 <body>
   <div class="dashboard">
@@ -124,6 +124,39 @@
           ▼
         </button>
       </div>
+      <section class="tuning-panel">
+  <h2>Live Tuning</h2>
+
+  <div class="tuning-grid">
+    <label>Setpoint
+      <input type="number" id="tune-setpoint" step="0.01" value="0">
+          </label>
+
+            <label>Balance KP
+              <input type="number" id="tune-kp" step="0.01" value="0">
+            </label>
+
+            <label>Balance KD
+              <input type="number" id="tune-kd" step="0.01" value="0">
+            </label>
+
+            <label>Speed
+              <input type="number" id="tune-speed" step="0.1" value="1">
+            </label>
+
+            <label>Auto KP
+              <input type="number" id="tune-auto-kp" step="0.01" value="0.45">
+            </label>
+
+            <label>Auto KI
+              <input type="number" id="tune-auto-ki" step="0.01" value="0">
+            </label>
+
+            <label>Auto KD
+              <input type="number" id="tune-auto-kd" step="0.01" value="0.12">
+            </label>
+          </div>
+        </section>
       </section>
 
       <section class="event-panel">

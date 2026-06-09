@@ -372,3 +372,24 @@ class RobotController:
         if self.thread:
             self.thread.join()
         send_serial_command("L:0 R:0")
+
+    def update_tuning(self, name, value):
+        print(f"Tuning update: {name} = {value}")
+
+        if name == "speed":
+            self.speed = value
+
+        elif name == "auto_kp":
+            self.kp = value
+
+        elif name == "auto_kd":
+            self.kd = value
+
+        elif name == "auto_ki":
+            self.ki = value
+
+        elif name in ["setpoint", "kp", "kd"]:
+            send_serial_command(f"TUNE:{name.upper()}:{value}")
+
+        else:
+            print(f"Unknown tuning parameter: {name}")

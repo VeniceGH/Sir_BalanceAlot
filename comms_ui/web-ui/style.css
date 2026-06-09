@@ -406,3 +406,37 @@ h2 {
 .hidden {
   display: none;
 }
+
+/* Live Tuning Panel */
+.tuning-panel {
+  margin-top: 24px;
+  width: 100%;
+  padding-top: 18px;
+  border-top: 1px solid #eee;
+}
+
+.tuning-panel h2 {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.tuning-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.tuning-grid label {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  font-weight: bold;
+  gap: 6px;
+}
+
+.tuning-grid input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 15px;
+}
