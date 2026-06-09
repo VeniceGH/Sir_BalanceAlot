@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
 
-  <link rel="stylesheet" href="style.css?build=31">
+  <link rel="stylesheet" href="style.css?build=32">
 </head>
 <body>
   <div class="dashboard">
@@ -86,77 +86,30 @@
         </div>
 
         <div class="gamepad">
-        <button
-          class="control-btn forward"
-          title="Move forward"
-          onmousedown="sendCommand('FORWARD')"
-          onmouseup="sendCommand('STOP')">
-          ▲
-        </button>
+          <button class="control-btn forward" title="Move forward"
+            onmousedown="sendCommand('FORWARD')" onmouseup="sendCommand('STOP')">
+            ▲
+          </button>
 
-        <button
-          class="control-btn turn-left"
-          title="Turn left"
-          onmousedown="sendCommand('LEFT')"
-          onmouseup="sendCommand('STOP')">
-          ↶
-        </button>
+          <button class="control-btn turn-left" title="Turn left"
+            onmousedown="sendCommand('LEFT')" onmouseup="sendCommand('STOP')">
+            ↶
+          </button>
 
-        <button
-          class="control-btn stop"
-          onclick="sendCommand('STOP')">
-          Stop
-        </button>
+          <button class="control-btn stop" onclick="sendCommand('STOP')">
+            Stop
+          </button>
 
-        <button
-          class="control-btn turn-right"
-          title="Turn right"
-          onmousedown="sendCommand('RIGHT')"
-          onmouseup="sendCommand('STOP')">
-          ↷
-        </button>
+          <button class="control-btn turn-right" title="Turn right"
+            onmousedown="sendCommand('RIGHT')" onmouseup="sendCommand('STOP')">
+            ↷
+          </button>
 
-        <button
-          class="control-btn backward"
-          title="Move backward"
-          onmousedown="sendCommand('BACKWARD')"
-          onmouseup="sendCommand('STOP')">
-          ▼
-        </button>
-      </div>
-      <section class="tuning-panel">
-  <h2>Live Tuning</h2>
-
-  <div class="tuning-grid">
-    <label>Setpoint
-      <input type="number" id="tune-setpoint" step="0.01" value="0">
-          </label>
-
-            <label>Balance KP
-              <input type="number" id="tune-kp" step="0.01" value="0">
-            </label>
-
-            <label>Balance KD
-              <input type="number" id="tune-kd" step="0.01" value="0">
-            </label>
-
-            <label>Speed
-              <input type="number" id="tune-speed" step="0.1" value="1">
-            </label>
-
-            <label>Auto KP
-              <input type="number" id="tune-auto-kp" step="0.01" value="0.45">
-            </label>
-
-            <label>Auto KI
-              <input type="number" id="tune-auto-ki" step="0.01" value="0">
-            </label>
-
-            <label>Auto KD
-              <input type="number" id="tune-auto-kd" step="0.01" value="0.12">
-            </label>
-          </div>
-        </section>
+          <button class="control-btn backward" title="Move backward"
+            onmousedown="sendCommand('BACKWARD')" onmouseup="sendCommand('STOP')">
+            ▼
+          </button>
+        </div>
       </section>
 
       <section class="event-panel">
@@ -170,8 +123,74 @@
         <div id="no-events" class="no-events">No package drop detected.</div>
       </section>
     </main>
-  </div>
 
-  <script src="app.js?build=30"></script>
+    <section class="tuning-panel">
+      <h2>Live Tuning</h2>
+
+      <div class="tuning-grid">
+        <div class="tuning-field">
+          <label for="tune-setpoint">Setpoint</label>
+          <div class="tuning-control">
+            <input class="tuning-slider" type="range" id="tune-setpoint-slider" min="-0.05" max="0.1" step="0.001" value="0">
+            <input class="tuning-number" type="number" id="tune-setpoint" min="-0.05" max="0.1" step="0.001" value="0">
+          </div>
+        </div>
+
+        <div class="tuning-field">
+          <label for="tune-kp">Balance KP</label>
+          <div class="tuning-control">
+            <input class="tuning-slider" type="range" id="tune-kp-slider" min="0" max="1500" step="1" value="0">
+            <input class="tuning-number" type="number" id="tune-kp" min="0" max="1500" step="1" value="0">
+          </div>
+        </div>
+
+        <div class="tuning-field">
+          <label for="tune-kd">Balance KD</label>
+          <div class="tuning-control">
+            <input class="tuning-slider" type="range" id="tune-kd-slider" min="0" max="100" step="0.1" value="0">
+            <input class="tuning-number" type="number" id="tune-kd" min="0" max="100" step="0.1" value="0">
+          </div>
+        </div>
+
+        <div class="tuning-field">
+          <label for="tune-speed">Speed</label>
+          <div class="tuning-control">
+            <input class="tuning-slider" type="range" id="tune-speed-slider" min="0" max="30" step="0.1" value="1">
+            <input class="tuning-number" type="number" id="tune-speed" min="0" max="30" step="0.1" value="1">
+          </div>
+        </div>
+
+        <div class="tuning-field">
+          <label for="tune-auto-kp">Auto KP</label>
+          <div class="tuning-control">
+            <input class="tuning-slider" type="range" id="tune-auto-kp-slider" min="0" max="2" step="0.01" value="0.45">
+            <input class="tuning-number" type="number" id="tune-auto-kp" min="0" max="2" step="0.01" value="0.45">
+          </div>
+        </div>
+
+        <div class="tuning-field">
+          <label for="tune-auto-ki">Auto KI</label>
+          <div class="tuning-control">
+            <input class="tuning-slider" type="range" id="tune-auto-ki-slider" min="0" max="0.5" step="0.001" value="0">
+            <input class="tuning-number" type="number" id="tune-auto-ki" min="0" max="0.5" step="0.001" value="0">
+          </div>
+        </div>
+
+        <div class="tuning-field">
+          <label for="tune-auto-kd">Auto KD</label>
+          <div class="tuning-control">
+            <input class="tuning-slider" type="range" id="tune-auto-kd-slider" min="0" max="1" step="0.01" value="0.12">
+            <input class="tuning-number" type="number" id="tune-auto-kd" min="0" max="1" step="0.01" value="0.12">
+          </div>
+        </div>
+      </div>
+
+      <button class="update-tuning-btn" onclick="sendTuningUpdate()">
+        Update tuning values
+      </button>
+    </section>
+
+  </div>
+  <script src="app.js?build=32"></script>
 </body>
 </html>

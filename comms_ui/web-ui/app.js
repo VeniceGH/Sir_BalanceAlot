@@ -113,38 +113,45 @@ function updateActivePackageCount() {
   countEl.textContent = `${activeCount} active`;
 }
 
-const tuningInputs = {
-  setpoint: document.getElementById("tune-setpoint"),
-  kp: document.getElementById("tune-kp"),
-  kd: document.getElementById("tune-kd"),
-  speed: document.getElementById("tune-speed"),
-  auto_kp: document.getElementById("tune-auto-kp"),
-  auto_ki: document.getElementById("tune-auto-ki"),
-  auto_kd: document.getElementById("tune-auto-kd"),
-};
-
-function sendTuning(name, value) {
-  if (ws.readyState !== WebSocket.OPEN) return;
+function sendTuningUpdate() {
+  const tuning = {
+    setpoint: Number(document.getElementById("tune-setpoint").value),
+    kp: Number(document.getElementById("tune-kp").value),
+    kd: Number(document.getElementById("tune-kd").value),
+    speed: Number(document.getElementById("tune-speed").value),
+    auto_kp: Number(document.getElementById("tune-auto-kp").value),
+    auto_ki: Number(document.getElementById("tune-auto-ki").value),
+    auto_kd: Number(document.getElementById("tune-auto-kd").value),
+  };
 
   ws.send(JSON.stringify({
     type: "tuning",
-    name: name,
-    value: Number(value),
+    values: tuning,
     time_ms: Date.now()
   }));
 
-  console.log("Sent tuning:", name, value);
+  console.log("Sent tuning update:", tuning);
 }
 
-Object.entries(tuningInputs).forEach(([name, input]) => {
-  input.addEventListener("change", () => {
-    sendTuning(name, input.value);
+const tuningPairs = [
+  ["tune-setpoint-slider", "tune-setpoint"],
+  ["tune-kp-slider", "tune-kp"],
+  ["tune-kd-slider", "tune-kd"],
+  ["tune-speed-slider", "tune-speed"],
+  ["tune-auto-kp-slider", "tune-auto-kp"],
+  ["tune-auto-ki-slider", "tune-auto-ki"],
+  ["tune-auto-kd-slider", "tune-auto-kd"],
+];
+
+tuningPairs.forEach(([sliderId, numberId]) => {
+  const slider = document.getElementById(sliderId);
+  const number = document.getElementById(numberId);
+
+  slider.addEventListener("input", () => {
+    number.value = slider.value;
   });
 
-  input.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
-      sendTuning(name, input.value);
-      input.blur();
-    }
+  number.addEventListener("input", () => {
+    slider.value = number.value;
   });
 });
