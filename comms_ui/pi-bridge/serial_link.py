@@ -105,7 +105,7 @@ def serial_reader_loop():
             print(f"Serial read error: {e}")
             time.sleep(0.1)
 
-def stop():
+def stop_serial():
     global running
     running = False
     if serial_writer:
