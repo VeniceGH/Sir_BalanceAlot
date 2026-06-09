@@ -1,9 +1,25 @@
-from picamera2 import Picamera2
+try:
+    from picamera2 import Picamera2
+    PI_CAMERA_AVAILABLE = True
+except ImportError:
+    Picamera2 = None
+    PI_CAMERA_AVAILABLE = False
 import threading
 import time
 
 class Camera:
     def __init__(self):
+        self.picam2 = None
+        self.latest_frame = None
+        self.latest_debug_frame = None
+        self.lock = threading.Lock()
+        self.running = False
+        self.thread = None
+
+        if not PI_CAMERA_AVAILABLE:
+            print("Camera disabled: picamera2 not available on this machine")
+            return
+
         self.picam2 = Picamera2()
 
         config = self.picam2.create_video_configuration()
@@ -12,18 +28,15 @@ class Camera:
         config["buffer_count"] = 3
         self.picam2.configure(config)
 
-        self.latest_frame = None
-        self.latest_debug_frame = None
-        self.lock = threading.Lock()
-        self.running = False
-
-        self.thread = None
-
     def start(self):
+        if self.picam2 is None:
+            print("Camera start skipped: no camera available")
+            return
+
         self.picam2.start()
         self.running = True
 
-        self.thread = threading.Thread(target=self._loop)
+        self.thread = threading.Thread(target=self._loop, daemon=True)
         self.thread.start()
 
     def _loop(self):
@@ -52,5 +65,6 @@ class Camera:
         if self.thread:
             self.thread.join()
 
-        self.picam2.stop()
-        self.picam2.close()
+        if self.picam2 is not None:
+            self.picam2.stop()
+            self.picam2.close()
