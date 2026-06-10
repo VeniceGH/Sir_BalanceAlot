@@ -58,13 +58,9 @@ async def websocket_endpoint(websocket: WebSocket):
                 robot.set_mode(mode)
                 send_serial_command(f"MODE:{mode.upper()}")
             elif message_type == "tuning":
-                name = message.get("name")
-                value = message.get("value")
-
-                if name is None or value is None:
-                    continue
-                    
-                robot.update_tuning(name, float(value))
+                values = message.get("values", {})
+                for name, value in values.items():
+                    robot.update_tuning(name, float(value))
 
     try:
         await asyncio.gather(
