@@ -389,6 +389,7 @@ class RobotController:
             self.ki = value
 
         elif name in ["setpoint", "kp", "kd"]:
+            print(f"Sending {name} -> {value}")
             send_serial_command(f"TUNE:{name.upper()}:{value}")
 
         else:
