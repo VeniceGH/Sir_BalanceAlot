@@ -7,7 +7,6 @@ BAUD_RATE = 115200
 
 ser = None
 
-latest_command = None
 last_sent_command = None
 command_lock = threading.Lock()
 
@@ -39,13 +38,17 @@ def start_serial():
     serial_reader.start()
 
 def send_serial_command(command):
+    global last_sent_command
     if ser is None:
         print(f"Serial unavailable. Would have sent: {command}")
         return
 
     with command_lock:
-        print(f"Sending to ESP32: {command}")
+        if last_sent_command == command:
+            return
         ser.write((command + "\n").encode())
+        print(f"Sending to ESP32: {command}")
+        last_sent_command = command
 
 def set_obstacle_callback(callback):
     global obstacle_callback
