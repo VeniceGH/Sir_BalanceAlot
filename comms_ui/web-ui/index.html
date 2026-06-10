@@ -137,34 +137,58 @@
         </div>
 
         <div class="tuning-field">
-          <label for="tune-kp">Speed KP</label>
+          <label for="tune-balance-kp">Balance KP</label>
           <div class="tuning-control">
-            <input class="tuning-slider" type="range" id="tune-kp-slider" min="0" max="1500" step="1" value="7">
-            <input class="tuning-number" type="number" id="tune-kp" min="0" max="1500" step="1" value="7">
+            <input class="tuning-slider" type="range" id="tune-balance-kp-slider" min="0" max="1500" step="50" value="900">
+            <input class="tuning-number" type="number" id="tune-balance-kp" min="0" max="1500" step="50" value="900">
           </div>
         </div>
 
         <div class="tuning-field">
-          <label for="tune-kd">Speed KD</label>
+          <label for="tune-balance-kd">Balance KD</label>
           <div class="tuning-control">
-            <input class="tuning-slider" type="range" id="tune-kd-slider" min="0" max="100" step="0.1" value="0.1">
-            <input class="tuning-number" type="number" id="tune-kd" min="0" max="100" step="0.1" value="0.1">
+            <input class="tuning-slider" type="range" id="tune-balance-kd-slider" min="0" max="100" step="5" value="20">
+            <input class="tuning-number" type="number" id="tune-balance-kd" min="0" max="100" step="5" value="20">
+          </div>
+        </div>
+
+        <div class="tuning-field">
+          <label for="tune-speed-kp">Speed KP</label>
+          <div class="tuning-control">
+            <input class="tuning-slider" type="range" id="tune-speed-kp-slider" min="0" max="1500" step="1" value="7.5">
+            <input class="tuning-number" type="number" id="tune-speed-kp" min="0" max="1500" step="1" value="7.5">
+          </div>
+        </div>
+
+        <div class="tuning-field">
+          <label for="tune-speed-ki">Speed KI</label>
+          <div class="tuning-control">
+            <input class="tuning-slider" type="range" id="tune-speed-ki-slider" min="0" max="0.5" step="0.001" value="0.0001">
+            <input class="tuning-number" type="number" id="tune-speed-ki" min="0" max="0.5" step="0.001" value="0.0001">
+          </div>
+        </div>
+
+        <div class="tuning-field">
+          <label for="tune-speed-kd">Speed KD</label>
+          <div class="tuning-control">
+            <input class="tuning-slider" type="range" id="tune-speed-kd-slider" min="0" max="100" step="0.1" value="0.1">
+            <input class="tuning-number" type="number" id="tune-speed-kd" min="0" max="100" step="0.1" value="0.1">
           </div>
         </div>
 
         <div class="tuning-field">
           <label for="tune-speed">Speed</label>
           <div class="tuning-control">
-            <input class="tuning-slider" type="range" id="tune-speed-slider" min="0" max="30" step="0.1" value="4">
-            <input class="tuning-number" type="number" id="tune-speed" min="0" max="30" step="0.1" value="4">
+            <input class="tuning-slider" type="range" id="tune-speed-slider" min="0" max="30" step="0.1" value="5">
+            <input class="tuning-number" type="number" id="tune-speed" min="0" max="30" step="0.1" value="5">
           </div>
         </div>
 
         <div class="tuning-field">
           <label for="tune-auto-kp">Auto KP</label>
           <div class="tuning-control">
-            <input class="tuning-slider" type="range" id="tune-auto-kp-slider" min="0" max="2" step="0.01" value="0.45">
-            <input class="tuning-number" type="number" id="tune-auto-kp" min="0" max="2" step="0.01" value="0.45">
+            <input class="tuning-slider" type="range" id="tune-auto-kp-slider" min="0" max="2" step="0.01" value="1">
+            <input class="tuning-number" type="number" id="tune-auto-kp" min="0" max="2" step="0.01" value="1">
           </div>
         </div>
 
@@ -179,10 +203,11 @@
         <div class="tuning-field">
           <label for="tune-auto-kd">Auto KD</label>
           <div class="tuning-control">
-            <input class="tuning-slider" type="range" id="tune-auto-kd-slider" min="0" max="1" step="0.01" value="0.12">
-            <input class="tuning-number" type="number" id="tune-auto-kd" min="0" max="1" step="0.01" value="0.12">
+            <input class="tuning-slider" type="range" id="tune-auto-kd-slider" min="0" max="1" step="0.01" value="0">
+            <input class="tuning-number" type="number" id="tune-auto-kd" min="0" max="1" step="0.01" value="0">
           </div>
         </div>
+
       </div>
 
       <button class="update-tuning-btn" onclick="sendTuningUpdate()">

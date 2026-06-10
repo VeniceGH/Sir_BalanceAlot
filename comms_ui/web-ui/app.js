@@ -116,8 +116,11 @@ function updateActivePackageCount() {
 function sendTuningUpdate() {
   const tuning = {
     setpoint: Number(document.getElementById("tune-setpoint").value),
-    kp: Number(document.getElementById("tune-kp").value),
-    kd: Number(document.getElementById("tune-kd").value),
+    speed_kp: Number(document.getElementById("tune-kp").value),
+    speed_kd: Number(document.getElementById("tune-kd").value),
+    speed_ki: Number(document.getElementById("tune-ki").value),
+    balance_kp: Number(document.getElementById("tune-balance-kp").value),
+    balance_kd: Number(document.getElementById("tune-balance-kd").value),
     speed: Number(document.getElementById("tune-speed").value),
     auto_kp: Number(document.getElementById("tune-auto-kp").value),
     auto_ki: Number(document.getElementById("tune-auto-ki").value),
@@ -135,8 +138,11 @@ function sendTuningUpdate() {
 
 const tuningPairs = [
   ["tune-setpoint-slider", "tune-setpoint"],
-  ["tune-kp-slider", "tune-kp"],
-  ["tune-kd-slider", "tune-kd"],
+  ["tune-balance-kp-slider", "tune-balance-kp"],
+  ["tune-balance-kd-slider", "tune-balance-kd"],
+  ["tune-speed-kp-slider", "tune-speed-kp"],
+  ["tune-speed-kd-slider", "tune-speed-kd"],
+  ["tune-speed-ki-slider", "tune-speed-ki"],
   ["tune-speed-slider", "tune-speed"],
   ["tune-auto-kp-slider", "tune-auto-kp"],
   ["tune-auto-ki-slider", "tune-auto-ki"],

@@ -388,7 +388,7 @@ class RobotController:
         elif name == "auto_ki":
             self.ki = value
 
-        elif name in ["setpoint", "kp", "kd"]:
+        elif name in ["setpoint", "speed_kp", "speed_kd", "speed_ki", "balance_kp", "balance_kd"]:
             print(f"Sending {name} -> {value}")
             send_serial_command(f"TUNE:{name.upper()}:{value}")
 
