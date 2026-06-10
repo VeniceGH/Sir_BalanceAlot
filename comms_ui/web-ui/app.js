@@ -115,7 +115,6 @@ function updateActivePackageCount() {
 
 function sendTuningUpdate() {
   const tuning = {
-    setpoint: Number(document.getElementById("tune-setpoint").value),
     speed_kp: Number(document.getElementById("tune-speed-kp").value),
     speed_kd: Number(document.getElementById("tune-speed-kd").value),
     speed_ki: Number(document.getElementById("tune-speed-ki").value),
@@ -137,7 +136,6 @@ function sendTuningUpdate() {
 }
 
 const tuningPairs = [
-  ["tune-setpoint-slider", "tune-setpoint"],
   ["tune-balance-kp-slider", "tune-balance-kp"],
   ["tune-balance-kd-slider", "tune-balance-kd"],
   ["tune-speed-kp-slider", "tune-speed-kp"],

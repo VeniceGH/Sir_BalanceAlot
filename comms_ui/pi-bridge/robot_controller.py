@@ -11,7 +11,7 @@ class RobotController:
         self.running = False
         self.thread = None
         self.FRAME_CENTER_X = 160 #320
-        self.speed = 2
+        self.speed = 5
         self.kp = 1
         self.kd = 0.0
         self.previous_error = 0
@@ -390,7 +390,7 @@ class RobotController:
         elif name == "auto_ki":
             self.ki = value
 
-        elif name in ["setpoint", "speed_kp", "speed_kd", "speed_ki", "balance_kp", "balance_kd"]:
+        elif name in ["speed_kp", "speed_kd", "speed_ki", "balance_kp", "balance_kd"]:
             print(f"Sending {name} -> {value}")
             send_serial_command(f"TUNE:{name.upper()}:{value}")
 
