@@ -116,9 +116,9 @@ function updateActivePackageCount() {
 function sendTuningUpdate() {
   const tuning = {
     setpoint: Number(document.getElementById("tune-setpoint").value),
-    speed_kp: Number(document.getElementById("tune-kp").value),
-    speed_kd: Number(document.getElementById("tune-kd").value),
-    speed_ki: Number(document.getElementById("tune-ki").value),
+    speed_kp: Number(document.getElementById("tune-speed-kp").value),
+    speed_kd: Number(document.getElementById("tune-speed-kd").value),
+    speed_ki: Number(document.getElementById("tune-speed-ki").value),
     balance_kp: Number(document.getElementById("tune-balance-kp").value),
     balance_kd: Number(document.getElementById("tune-balance-kd").value),
     speed: Number(document.getElementById("tune-speed").value),
