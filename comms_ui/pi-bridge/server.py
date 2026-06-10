@@ -90,7 +90,7 @@ async def mjpeg_generator():
             b"\r\n"
         )
 
-        await asyncio.sleep(0.03)
+        await asyncio.sleep(0.08)
 
 
 @app.get("/camera-feed")

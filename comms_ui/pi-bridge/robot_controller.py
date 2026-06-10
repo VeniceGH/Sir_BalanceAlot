@@ -83,6 +83,7 @@ class RobotController:
 
                 frame = self.camera.get_frame()
                 if frame is None:
+                    time.sleep(0.01)
                     continue
 
                 if self.obstacle_mode == "NONE":
@@ -96,6 +97,7 @@ class RobotController:
                 elif self.obstacle_mode == "OBSTACLE_APPROACH":
                     self.approach_obstacle(frame)
                 elif self.obstacle_mode == "OBSTACLE_AVOID":
+                    time.sleep(0.01)
                     continue
             time.sleep(0.01)
     
