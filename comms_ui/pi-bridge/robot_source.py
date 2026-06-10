@@ -4,7 +4,7 @@ import time
 
 def get_fake_telemetry():
     t = time.time()
-
+    """
     return {
         "time_ms": int(t * 1000),
         "angle_deg": round(8 * math.sin(t), 2),
@@ -14,4 +14,15 @@ def get_fake_telemetry():
         "battery_v": round(7.6 + random.uniform(-0.05, 0.05), 2),
         "mode": "SIM",
         "package_dropped": random.random() < 0.02
+    }
+"""
+    return {
+        "time_ms": 0,
+        "angle_deg": 0,
+        "gyro_dps": 0,
+        "motor_left": 0,
+        "motor_right": 0,
+        "battery_v": 0,
+        "mode": "SIM",
+        "package_dropped": 0
     }
