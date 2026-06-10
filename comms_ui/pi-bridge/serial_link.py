@@ -13,7 +13,6 @@ command_lock = threading.Lock()
 
 obstacle_callback = None
 
-serial_writer = None
 serial_reader = None
 
 running = False
@@ -32,52 +31,21 @@ def connect_serial():
 
 def start_serial():
     global running
-    global serial_writer
     global serial_reader
 
     running = True
 
-    serial_writer = threading.Thread(target=serial_writer_loop)
     serial_reader = threading.Thread(target=serial_reader_loop)
-
-    serial_writer.start()
     serial_reader.start()
 
-
 def send_serial_command(command):
-    global latest_command
-
     if ser is None:
+        print(f"Serial unavailable. Would have sent: {command}")
         return
 
     with command_lock:
-        latest_command = command
-
-def serial_writer_loop():
-    global latest_command
-    global last_sent_command
-
-    while running:
-        if ser is None:
-            time.sleep(0.5)
-            continue
-
-        cmd_to_send = None
-
-        with command_lock:
-            if latest_command is not None and latest_command != last_sent_command:
-                cmd_to_send = latest_command
-                last_sent_command = latest_command
-            
-        if cmd_to_send:
-            try:
-                print(f"Sending serial command: {cmd_to_send}")
-                ser.write((cmd_to_send + "\n").encode())
-
-            except Exception as e:
-                print(f"Serial write error: {e}")
-        
-        time.sleep(0.1)
+        print(f"Sending to ESP32: {command}")
+        ser.write((command + "\n").encode())
 
 def set_obstacle_callback(callback):
     global obstacle_callback
@@ -109,8 +77,6 @@ def serial_reader_loop():
 def stop_serial():
     global running
     running = False
-    if serial_writer:
-        serial_writer.join()
     if serial_reader:
         serial_reader.join()
     if ser:
