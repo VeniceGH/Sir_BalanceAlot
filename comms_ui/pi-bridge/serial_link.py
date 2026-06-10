@@ -62,7 +62,6 @@ def serial_reader_loop():
 
         try:
             line = ser.readline().decode('utf-8', errors='ignore').strip()
-            print(f"Serial read: {line}")
 
             if not line:
                 continue
