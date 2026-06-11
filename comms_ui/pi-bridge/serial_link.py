@@ -16,6 +16,20 @@ serial_reader = None
 
 running = False
 
+latest_telemetry = {
+    "time_ms": 0,
+    "angle_deg": 0.0,
+    "gyro_dps": 0.0,
+    "motor_left": 0.0,
+    "motor_right": 0.0,
+    "fuel_percent": 100.0,
+    "mode": "NO DATA",
+    "package_dropped": False,
+}
+
+def get_latest_telemetry():
+    return latest_telemetry
+
 def connect_serial():
     global ser, running
 
@@ -71,6 +85,23 @@ def serial_reader_loop():
 
                 if obstacle_callback:
                     obstacle_callback(value)
+
+            if line.startswith("TEL:"):
+                parts = line[4:].split(",")
+
+                if len(parts) != 7:
+                    print(f"Bad telemetry line: {line}")
+                    continue
+
+                latest_telemetry["time_ms"] = int(parts[0])
+                latest_telemetry["angle_deg"] = float(parts[1])
+                latest_telemetry["gyro_dps"] = float(parts[2])
+                latest_telemetry["motor_left"] = float(parts[3])
+                latest_telemetry["motor_right"] = float(parts[4])
+                latest_telemetry["fuel_percent"] = float(parts[5])
+                latest_telemetry["mode"] = parts[6]
+
+                continue
 
         except Exception as e:
             print(f"Serial read error: {e}")

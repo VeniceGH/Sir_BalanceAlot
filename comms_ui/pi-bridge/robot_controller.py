@@ -37,6 +37,9 @@ class RobotController:
         self.last_marker_time = 0
         self.marker_detected = False
         self.obstacle_mode = "NONE"
+        self.package_dropped = False
+        self.package_drop_time = None
+        self.package_size = None
 
     def start(self):
         self.running = True
@@ -271,6 +274,9 @@ class RobotController:
             if data:
                 send_serial_command("L:0 R:0")
                 self.last_qr_data = data
+                self.package_dropped = True
+                self.package_drop_time = time.strftime("%H:%M:%S")
+                self.package_size = data
                 self.approach_started = False
                 send_serial_command(f"MODE:OBSTACLE_AVOID")
                 self.obstacle_mode = "OBSTACLE_AVOID"
@@ -368,6 +374,16 @@ class RobotController:
             )
 
         self.camera.set_debug_frame(output)
+
+    def get_package_status(self):
+        return {
+            "package_dropped": self.package_dropped,
+            "package_drop_time": self.package_drop_time,
+            "package_size": self.package_size,
+            "last_qr_data": self.last_qr_data,
+            "last_marker_id": self.last_marker_id,
+            "obstacle_mode": self.obstacle_mode,
+        }
 
     def stop(self):
         self.running = False

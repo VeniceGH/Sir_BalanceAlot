@@ -7,8 +7,7 @@ from fastapi import FastAPI, WebSocket
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import StreamingResponse
 
-from serial_link import connect_serial, set_obstacle_callback, send_serial_command, start_serial, stop_serial
-from robot_source import get_fake_telemetry
+from serial_link import connect_serial, set_obstacle_callback, send_serial_command, start_serial, stop_serial, get_latest_telemetry
 from camera import Camera
 from robot_controller import RobotController
 
@@ -42,7 +41,8 @@ async def websocket_endpoint(websocket: WebSocket):
 
     async def send_telemetry():
         while True:
-            data = get_fake_telemetry()
+            data = get_latest_telemetry()
+            data.update(robot.get_package_status())
             await websocket.send_json(data)
             await asyncio.sleep(0.05)
 
