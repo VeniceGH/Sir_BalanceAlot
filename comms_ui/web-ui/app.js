@@ -22,7 +22,7 @@ ws.onmessage = (event) => {
   document.getElementById("gyro").textContent = data.gyro_dps.toFixed(2);
   document.getElementById("left").textContent = data.motor_left;
   document.getElementById("right").textContent = data.motor_right;
-  document.getElementById("battery").textContent = data.battery_v.toFixed(2);
+  document.getElementById("fuel").textContent = data.fuel_percent.toFixed(1);
   document.getElementById("mode").textContent = data.mode;
 };
 
